@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&display=swap" rel="stylesheet">
+
+<title>Star Wars Timeline</title>
+
+<style>
+:root{
+    --yellow:#FFE81F;
+    --bg:#000;
+    --text:#fff;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+h1{
+    position:sticky;
+    top:0;
+    margin:0;
+    padding:20px 0;
+    text-align:center;
+    font-size:3rem;
+    background:var(--bg);
+    z-index:1000;
+    font-family: "Orbitron", sans-serif;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: #FFE81F;
+    text-shadow: 0 0 12px rgba(255,232,31,0.8);
+}
+
+.timeline{
+    position:relative;
+    width:1100px;
+    max-width:95vw;
+    margin:auto;
+    padding:40px 0 200px 0;
+}
+
+.timeline::before{
+    content:"";
+    position:absolute;
+    top:0;
+    bottom:0;
+    left:50%;
+    transform:translateX(-50%);
+    width:4px;
+    background:var(--yellow);
+    z-index:1;
+}
+
+.year-tick{
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    width:18px;
+    height:2px;
+    background:var(--yellow);
+    z-index:2;
+}
+
+.year-label{
+    position:absolute;
+    left:calc(50% + 24px);
+    transform:translateY(-50%);
+    font-size:11px;
+    color:var(--yellow);
+    white-space:nowrap;
+    z-index:3;
+}
+
+.timeline-dot{
+    position:absolute;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    border:3px solid var(--yellow);
+    background:white;
+    cursor:pointer;
+    z-index:5;
+    transition:.2s;
+}
+
+.timeline-dot:hover{
+    transform:translate(-50%,-50%) scale(1.2);
+}
+
+.timeline-range{
+    position:absolute;
+    width:4px;
+    border-radius:2px;
+    cursor:pointer;
+    z-index:4;
+    transition:.2s;
+}
+
+.timeline-range:hover{
+    width:8px;
+}
+
+.popup {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    width: 340px;
+    max-width: 42vw;
+    background: #111;
+    border: 2px solid var(--yellow);
+    border-radius: 10px;
+    padding: 16px;
+    z-index: 100;
+    box-shadow: 0 0 20px rgba(255,232,31,.3);
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    transform: translateY(-50%);
+}
+
+.popup.show {
+    visibility: visible;
+    opacity: 1;
+}
+
+.popup.left{
+    right:calc(60% + 40px);
+}
+
+.popup.right{
+    left:calc(60% + 40px);
+}
+
+.popup-card{
+    background:#1b1b1b;
+    border:1px solid var(--yellow);
+    border-radius:8px;
+    padding:12px;
+}
+
+.popup-card:not(:last-child){
+    margin-bottom:12px;
+}
+
+.popup-date{
+    color:var(--yellow);
+    font-weight:bold;
+    margin-bottom:8px;
+    font-family: "Orbitron", sans-serif;
+}
+
+.popup-type {
+    font-size: 0.85rem;
+    color: #aaa;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.popup-title{
+    font-size:1.15rem;
+    margin-bottom:10px;
+}
+
+.popup-details{
+    display:none;
+    border-top:1px solid var(--yellow);
+    margin-top:10px;
+    padding-top:10px;
+}
+
+.popup-card.active .popup-details{
+    display:block;
+}
+
+.popup-pagination{
+    display:flex;
+    justify-content:center;
+    gap:6px;
+    margin-top:15px;
+}
+
+.popup-dot{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    border:1px solid var(--yellow);
+    cursor:pointer;
+    opacity:0.6;
+    transition:0.2s;
+}
+
+.popup-dot.active{
+    background:var(--yellow);
+    opacity:1;
+}
+
+.era-line{
+    position:absolute;
+    left:0;
+    width:100%;
+    height:0;
+    border-top:2px dotted red;
+    z-index:1;
+    pointer-events:none;
+}
+
+.era-label{
+    position:absolute;
+    left:10px;
+    transform:translateY(20%);
+    font-family:"Orbitron", sans-serif;
+    font-size:22px;
+    font-weight:800;
+    color:red;
+    text-transform:uppercase;
+    letter-spacing:2px;
+    white-space:nowrap;
+    z-index:3;
+}
+
+
+@media(max-width:900px){
+
+.timeline{
+    width:100%;
+}
+
+.timeline::before{
+    left:25px;
+}
+
+.year-tick{
+    left:25px;
+}
+
+.timeline-dot{
+    left:25px;
+}
+
+.timeline-range{
+    left:25px;
+}
+
+.year-label{
+    left:42px;
+}
+
+.popup.left{
+    right:calc(50% + 90px);
+}
+
+.popup.right{
+    left:calc(50% + 90px);
+}
+
+.popup{
+    left:50px !important;
+    right:auto !important;
+    width:calc(100vw - 70px);
+    max-width:none;
+}
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Star Wars Timeline</h1>
+
+<div class="timeline" id="timeline">
+
+    <div id="cards"></div>
+
+</div>
+
+<script>
+const minYear = -233 -5;
+const maxYear = 35 +5;
+
+class Media{
+    constructor(title, start, end, description){
+        this.title = title;
+        this.start = start;
+        this.end = end;
+	this.description = description;
+    }
+}
+
+class Movie extends Media{}
+class Show extends Media{}
+class TalesOf extends Show{
+    constructor(title,start,end,episode="",description){
+        super(title,start,end, description);
+        this.episode = episode;
+    }
+}
+
+class Era{
+    constructor(name, year, colour){
+        this.name = name;
+        this.year = year;
+        this.colour = colour;
+    }
+}
+
+let allMedia = [
+
+    new Show("The Acolyte",-148,-132,"In the final days of the High Republic era, a former Jedi Padawan must help the Jedi investigate a series of murders she is accused of."),
+
+    new TalesOf("Tales of the Jedi",-63,-63,"Justice","Master Dooku and his Padawan Qui-Gon Jinn are sent to an impoverished planet to rescue the kidnapped son of a corrupt senator."),
+
+    new TalesOf("Tales of the Jedi",-49,-42,"Choices","Masters Dooku and Mace Windu retrieve the body of another Jedi Master and investigate the mysterious circumstances of her death."),
+
+    new TalesOf("Tales of the Jedi",-35,-35,"Life and Death","Pav-ti and her newborn daughter Ahsoka Tano embark on a traditional hunting ritual."),
+
+    new TalesOf("Tales of the Jedi",-21,-19,"Practice Makes Perfect","Anakin Skywalker trains his apprentice Ahsoka Tano in a set of unconventional combat drills."),
+
+    new Movie("The Phantom Menace",-32,-32,"Qui-Gon Jinn and his Padawan Obi-Wan Kenobi discover a force sensitive boy while rescuing the Queen Padmé Amidala of Naboo."),
+
+    new TalesOf("Tales of the Jedi",-32,-32,"The Sith Lord","After the death of his former Master, Master Dooku becomes consumed by his disillusionment with the Jedi Order."),
+
+    new Movie("Attack of the Clones",-22,-22,"A Separatist movement threatens the Galactic Republic with civil war. Obi-Wan Kenobi investigate an assassination attempt on Senator Padmé Amidala while his apprentice Anakin Skywalker secretly begins a romance with her."),
+
+    new Movie("The Clone Wars (Film)",-22,-22,"Jedi Knights Anakin Skywalker and Obi-Wan Kenobi fight to rescue the son of Jabba the Hutt. Anakin struggles to get used to his new Padawan Ahsoka Tano."),
+
+    new Show("The Clone Wars",-22,-19,"The Jedi and Sith clash as the clone army of the Galactic Republic and the droid army of the Separatists fight a galactic war."),
+
+    new Show("The Bad Batch",-19,-18,"After Order 66, an elite squadron of genetically mutated clones go on the run from the Empire after taking in a young clone girl."),
+
+    new TalesOf("Tales of the Jedi",-19,-14,"Resolve","After Order 66, Ahsoka Tano attempts to live in hiding in a farming community but finds herself drawn back to conflict."),
+
+    new Movie("Revenge of the Sith",-19,-19,"Chancellor Palpatine executes Order 66, ending the Clone Wars and orchestrating the downfall of the Jedi, the establishment of the Empire, and the transformation of Anakin Skywalker into Darth Vader."),
+
+    new TalesOf("Tales of the Empire",-20,-20,"The Path of Fear","A young Morgan Elsbeth must choose a new life after General Grievous's massacre of the Nightsisters."),
+
+    new TalesOf("Tales of the Empire",-19,-19,"The Path of Anger","Morgan Elsbeth, the new Magistrate of Corvus, forms an alliance with the imperial Grand Admiral Thrawn."),
+
+    new TalesOf("Tales of the Empire",-19,-19,"Devoted","Barriss Offee is recruited to the Empire's Inquisitor program to hunt down surviving Jedi."),
+
+    new Movie("Solo",-13,-10,"A young Han Solo meets Chewbacca, joins a gang of smugglers, and attempts a heist of coaxium for a crime boss of the Crimson Dawn syndicate."),
+
+    new Show("Obi-Wan Kenobi",-9,-9,"Former Jedi Master Obi-Wan Kenobi emerges from exile on Tatooine to rescue young Princess Leia from the Empire's Inquisitors."),
+
+    new TalesOf("Tales of the Empire",-6,-6,"Realization","Inquisitors Barriss Offee and Fourth Sister hunt down a suspected Jedi."),
+
+    new Show("Andor",-5,-1,"Cassian Andor becomes radicalized by the oppressive and overbearing Empire as the early Rebellion begins to take shape."),
+
+    new TalesOf("Tales of the Empire",-2,-2,"The Way Out","Barriss Offee helps a force-sensitive child escape the Empire while she is tracked by the Fourth Sister."),
+
+    new Movie("Rogue One",-1,-1,"A group of Rebel spies embark on a desperate mission to steal the schematics for the Death Star."),
+
+    new Movie("A New Hope",0,0,"Farm boy Luke Skywalker embarks on a quest to save Princess Leia and destroy the Death Star."),
+
+    new Show("Rebels",1,5,"The crew of the starship Ghost evade the Empire as they assist the rebellion and learn more about the fallen Jedi order."),
+
+    new Movie("The Empire Strikes Back",3,3,"Luke Skywalker trains in the Force with a Jedi Master as Han Solo and Princess Leia flee the Empire."),
+
+    new Movie("Return of the Jedi",4,4,"The Rebels attempt to destroy the second Death Star and end the war against the Empire, as Luke Skywalker looks for good in Darth Vader."),
+
+    new TalesOf("Tales of the Empire",7,7,"The Path of Hate","Morgan Elsbeth consolidates her power and defends her title as the Magistrate of Corvus as the New Republic attempts to stop her."),
+
+    new Show("The Mandalorian",9,9,"The country hunter Din Djarin finds himself on the run from the Empire and the New Republic as he adopts Grogu, a Force-sensitive child."),
+
+    new Show("The Book of Boba Fett",9,9,"Former bounty hunters Boba Fett and Fennec Shand attempt to claim and establish order in Jabba the Hutt's former criminal territory after his death."),
+
+    new Show("Ahsoka",9,9,"Ahsoka Tano and Sabine Wren attempt to find the Imperial Thrawn and their friend Ezra Bridger after they disappeared before the remnants of the Empire can."),
+
+    new Show("Skeleton Crew",9,9,"Four suburban children attempt to find their way back after an abandoned ship sends them far from home into a dangerous, pirate-infested galaxy."),
+
+    new Show("Resistance",34,34,"New Republic pilot Kaz Xiono is recruited by the Resistance to spy on the First Order presence on a remote refuelling station."),
+
+    new Movie("The Force Awakens",34,34,"Scavenger Rey and defecting stormtrooper Finn must find a way to deliver a map segment to the Rebellion and avoid capture by the First Order."),
+
+    new Movie("The Last Jedi",34,34,"As the Resistance flees the First Order, Rey seeks out Luke Skywalker to train her in the ways of the Force while Finn and Rose Tico attempt to sabotage the First Order's tracking capabilities."),
+
+    new Movie("The Rise of Skywalker",35,35,"Rey, Finn, and Pow Dameron search for a Sith Wayfinder in order to stop the resurrected Emperor Palpatine and his First Order fleet."),
+
+    new Movie("The Mandalorian and Grogu",12,12,"Dinn Djarin and Grogu track down Jabba the Hutt's son for the New Republic."),
+
+    new Show("Young Jedi Adventures", -233,-232,"A trio of Jedi younglings study the Force at a Jedi Temple."),
+
+    new Show("Maul: Shadow Lord",-15,-15,"Former Sith Lord Maul takes revenge on the criminal syndicates who betrayed him as he tries to recruit disillusioned Jedi Padawan Devon Izara to be his apprentice."),
+
+    new TalesOf("Tales of the Underworld",-19,-18,"A Way Forward","After the Night Sisters resurrect her from the dead, Asajj Ventress meets a young Jedi boy Lyco Strata, causing her to be pursued by the Empire."),
+
+    new TalesOf("Tales of the Underworld",-18,-18,"Friends","Asajj Ventress and Lyco Strata seek information about the Hidden Path from a bounty hunter who convinces them to assist on a job."),
+
+    new TalesOf("Tales of the Underworld",-18,-18,"One Warrior to Another","Asajj Ventress and Lyco Strata help the locals on a desert planet with a dispute as they look for The Hidden Path."),
+
+    new TalesOf("Tales of the Underworld",-53,-53,"The Good Life","Two orphaned street rats, Colby and his friend Niro, cross paths with a gangster."),
+
+    new TalesOf("Tales of the Underworld",-43,-43,"A Good Turn","Colby, now known as Cad Bane, seeks revenge on a lawman after his criminal mentor is killed."),
+
+    new TalesOf("Tales of the Underworld",-36,-36,"One Good Deed","Outlaw Cad Bane returns home from prison seeking revenge on his former friend turned marshal, Niro.")
+];
+
+let allEras = [
+    new Era("The High Republic", minYear, "#2E67F8"),
+    new Era("The Galactic Republic", -100, "#2E67F8"),
+    new Era("The Empire", -19, "#BC1E22"),
+    new Era("The New Republic", 4, "#2E67F8"),
+    new Era("The First Order", 34, "#BC1E22"),
+];
+
+allMedia.forEach((m,i)=>m.id=i);
+
+const timeline = document.getElementById("timeline");
+
+const spacing = 18;
+
+function yearToY(year){
+    return 100 + (year - minYear) * spacing;
+}
+
+function createTicks(){
+    for(let y=minYear;y<=maxYear;y++){
+
+        const tick=document.createElement("div");
+        tick.className="year-tick";
+        tick.style.top=yearToY(y)+"px";
+        timeline.appendChild(tick);
+
+        const label=document.createElement("div");
+        label.className="year-label";
+        label.style.top=yearToY(y)+"px";
+        label.textContent =
+            y < 0 ? `${Math.abs(y)} B.B.Y` :
+            y > 0 ? `${y} A.B.Y` : "0 A.B.Y";
+
+        timeline.appendChild(label);
+    }
+}
+
+function groupByYear(){
+    const map = {};
+
+    for(const m of allMedia){
+
+        if(m.start === m.end){
+            if(!map[m.start]) map[m.start] = [];
+            map[m.start].push(m);
+        }
+    }
+
+    return map;
+}
+
+const grouped = groupByYear();
+
+function createDots(){
+    for(const year in grouped){
+
+        const y = yearToY(Number(year));
+
+        const dot = document.createElement("div");
+        dot.className = "timeline-dot";
+        dot.style.top = y + "px";
+        dot.dataset.year = year;
+
+        dot.addEventListener("click", (e) => {
+   		e.stopPropagation();
+    		openPopup(Number(year), dot);
+	});
+
+        timeline.appendChild(dot);
+    }
+}
+
+function createRanges() {
+  let allMedias = []; 
+  let count = 0;
+
+   let track1Count = 0;
+   let track2Count = 0;
+
+   const sorted = allMedia.toSorted((a, b) => a.start - b.start);
+
+  for (const m of sorted) {
+    if (m.start === m.end) continue;
+
+    allMedias.push(m.end);
+    allMedias = allMedias.filter(item => item > m.start);
+
+    const range = document.createElement("div");
+    range.className = "timeline-range";
+
+    const top = yearToY(m.start);
+    const bottom = yearToY(m.end);
+
+    range.style.top = top + "px";
+    range.style.height = (bottom - top) + "px";
+
+    const offset = (5 * allMedias.length)
+    
+    range.style.left = 50 - offset + "%"; 
+    range.style.transform = "translateX(-" + 50 - offset + "%)";
+    range.dataset.id = m.id;
+
+    if (offset == 5){
+        track1Count++;
+        if (track1Count%2){
+          range.style.background = "white";
+        }else{
+          range.style.background = "yellow";
+        }
+    }else{
+        track2Count++;
+        if (track2Count%2){
+          range.style.background = "yellow";
+        }else{
+          range.style.background = "white";
+        }
+    }
+
+    range.addEventListener("click", (e) => {
+    	e.stopPropagation();
+    	openPopupForMedia(m, range);
+    });
+
+    timeline.appendChild(range);
+    count++;
+  }
+}
+
+
+const popup=document.createElement("div");
+popup.className="popup";
+document.body.appendChild(popup);
+
+popup.addEventListener("click", (e) => {
+    e.stopPropagation();
+});
+
+function buildPopup(items){
+    popup.innerHTML="";
+
+    items.forEach(m=>{
+        const card=document.createElement("div");
+        card.className="popup-card";
+
+        const actualType = m.constructor.name === "TalesOf" ? "Show episode" : m.constructor.name;
+
+        const pages = [
+            {
+                title: m.title,
+                date: m.start===m.end
+                    ? formatYear(m.start)
+                    : `${formatYear(m.start)} – ${formatYear(m.end)}`,
+                type: actualType
+            },
+            {
+                title: "",
+                date: "Description",
+                type: m.description
+            }
+        ];
+
+        let currentPage = 0;
+
+        function renderPage(){
+            const p = pages[currentPage];
+
+            card.innerHTML=`
+                <div class="popup-date">${p.date}</div>
+                
+                ${p.type && currentPage === 0 ? `<div class="popup-type">${p.type}</div>` : ''}
+                
+                ${p.title ? `
+                    <div class="popup-title">
+                        <i>${p.title}</i>
+                        ${m instanceof TalesOf && m.episode ? `<br>"${m.episode}"` : ""}
+                    </div>
+                ` : ''}
+
+                ${currentPage > 0 ? `
+                    <div class="popup-details" style="display: block;">
+                        ${p.type}
+                    </div>
+                ` : ''}
+
+                <div class="popup-pagination"></div>
+            `;
+
+            const dots = card.querySelector(".popup-pagination");
+
+            pages.forEach((_,i)=>{
+                const d=document.createElement("div");
+                d.className="popup-dot" + (i===currentPage ? " active" : "");
+
+                d.addEventListener("click",(e)=>{
+                    e.stopPropagation();
+                    currentPage=i;
+                    renderPage();
+                });
+
+                dots.appendChild(d);
+            });
+
+            card.onclick = (e) => {
+                if(currentPage > 0) {
+                    card.classList.toggle("active");
+                }
+            };
+        }
+
+        renderPage();
+        popup.appendChild(card);
+    });
+}
+
+let currentPopupId = null;
+
+function openPopup(year, anchor) {
+
+    if (currentPopupId === "year-" + year && popup.classList.contains("show")) {
+        popup.classList.remove("show");
+        currentPopupId = null;
+        return;
+    }
+
+    currentPopupId = "year-" + year;
+
+    buildPopup(grouped[year]);
+    positionPopup(anchor);
+    popup.classList.add("show");
+}
+
+function openPopupForMedia(media, anchor) {
+
+    if (currentPopupId === media.id && popup.classList.contains("show")) {
+        popup.classList.remove("show");
+        currentPopupId = null;
+        return;
+    }
+
+    currentPopupId = media.id;
+
+    buildPopup([media]);
+    positionPopup(anchor);
+    popup.classList.add("show");
+}
+
+function positionPopup(anchor) {
+    const rect = anchor.getBoundingClientRect();
+    const isLeftSide = rect.left > window.innerWidth / 2;
+
+    popup.classList.toggle("left", isLeftSide);
+    popup.classList.toggle("right", !isLeftSide);
+
+    popup.style.top = `${rect.top + window.scrollY + rect.height / 2}px`;
+
+    popup.style.left = "";
+    popup.style.right = "";
+}
+
+document.addEventListener("click", () => {
+    popup.classList.remove("show");
+    currentPopupId = null;
+});
+
+function formatYear(year){
+    if(year<0) return `${Math.abs(year)} B.B.Y`;
+    if(year>0) return `${year} A.B.Y`;
+    return "0 A.B.Y";
+}
+
+function createEras(){
+    for(const era of allEras){
+
+        const y = yearToY(era.year);
+
+        const line = document.createElement("div");
+        line.className = "era-line";
+        line.style.top = y + "px";
+        line.style.borderTopColor = era.colour;
+
+        const label = document.createElement("div");
+        label.className = "era-label";
+        label.style.top = y + "px";
+        label.textContent = era.name;
+        label.style.color = era.colour;
+
+        timeline.appendChild(line);
+        timeline.appendChild(label);
+    }
+}
+
+createTicks();
+createEras();
+createDots();
+createRanges();
+const timelineHeight = yearToY(maxYear) + 200;
+timeline.style.height = timelineHeight + "px";
+
+</script>
+</div>
+</body>
+</html>
