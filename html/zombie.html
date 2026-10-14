@@ -7,37 +7,7 @@
 <title>The Zombie</title>
 
 <style>
-table, td, th, tr {
-    border-collapse:collapse;
-    border:1px solid black; 
-    padding:2px; 
-    }
-    tr.alt1 { background-color:#E0E0E0; }
-    tr.alt2 { background-color:#FFFFFF; }
-    .prop { margin-left: 30px; margin-top: 2px; margin-bottom: 2px; }
-    .alg { margin-left: 60px; margin-top: 2px; margin-bottom: 2px;}
-    .tool { margin-left: 90px; margin-top: 2px; margin-bottom: 2px;}
-    .toolprop { margin-left: 120px; margin-top: 2px; margin-bottom: 2px;}
-    a:link,a:visited {text-decoration:none}
-    a:hover {text-decoration:underline}
-    .hidden { display: none; }
-    .unhidden { display: block; }
 
-.table th, .table td {
-         width: 50px;
-         word-wrap: break-word;
-         font-size: 14px;
-         padding: 2px;
-         padding-left: 6px;
-}
-.table th { 
-         text-align: left !important;
-         color: white; 
-}
-.table {
-         table-layout: fixed;
-         margin-bottom: 20px; 
-}
 .table-container {
          position: relative;
 }
@@ -57,6 +27,28 @@ table, td, th, tr {
       	display: none;
        	overflow: hidden;
 }
+.button {
+       background-color: #8f8d8d;
+       color: white;
+       padding: 5px 10px;
+       text-align: center;
+       display: inline-block;
+       font-size: 20px;
+       margin-right: 5px;
+       border-radius: 8px;
+       border: none;
+     }
+.button:focus {     
+       background-color: #8f8d8d;
+       color: white;
+       padding: 5px 10px;
+       text-align: center;
+       display: inline-block;
+       font-size: 20px;
+       margin-right: 5px;
+       border-radius: 8px;
+       border: 2px solid black;
+}
 
 </style>
 </head>
@@ -67,9 +59,20 @@ DEVELOPMENT NOTE:
 The Zombie will let the Bard look at a list of his favourite films (list of zombie films). He says that the paper is enchanted so you can filter the list or get a random film.<br>
 
 <div id="result"></div>
+<iframe 
+    width="560" 
+    height="315" 
+    src="https://www.youtube.com/watch?v=mmFH1L7rK8s" 
+    frameborder="0" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+    allowfullscreen>
+</iframe>
+<button type="button" class="button" onclick="getRandom()">Get random film</button> 
+<div id="ran_result"></div>
 
 <script>
 const csvUrl = '../csv/zombie_data.csv'; 
+let parsedData;
 
 async function loadCSV() {
     try {
@@ -81,7 +84,7 @@ async function loadCSV() {
         
         const csvText = await response.text();
         
-        const parsedData = parseCSVText(csvText);
+        parsedData = parseCSVText(csvText);
         console.log(parsedData); 
     } catch (error) {
         console.error('Error loading the CSV file:', error);
@@ -93,7 +96,7 @@ function parseCSVText(text) {
     if (lines.length === 0) return [];
 
     // Extract headers
-    const headers = lines[0].split(',');
+    const headers = ["timestamp", "name", "description", "rating", "gen_scary", "setting", "is_apocalypse", "setting_qualities", "zom_qualities", "zom_info", "zom_scary", "genre", "is_real", "infection", "cause", "review", "ranking"];
 
     // Map remaining rows to objects
     return lines.slice(1).map(line => {
@@ -106,12 +109,57 @@ function parseCSVText(text) {
     });
 }
 
-//Run functions on load
+//makes the dropdowns on a page
+function renderDropdown() {
+      const container = document.getElementById("result");
+      //container.innerHTML = `<p>text</p>`;
+      const html = document.createElement("div");
+      appendDropdowns(parsedData, html);
+      container.appendChild(html);
+      setupCollapsibles();
+}
+
+// Adds dropdowns html code to existing location on page
+function appendDropdowns(obj, parent) { 
+      for (const item of obj) {
+        const btn = document.createElement("button");
+        btn.className = "collapsible";
+        btn.textContent = item["name"];
+        const div = document.createElement("div");
+        div.className = "content"
+	divElement.textContent = item["description"]
+        parent.appendChild(btn);
+        parent.appendChild(div);
+      }
+    }
+
+
+// Adds collapsible functionality to dropdowns
+function setupCollapsibles() {
+        const coll = document.getElementsByClassName("collapsible");
+        for (let i = 0; i < coll.length; i++) {
+              coll[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+                const content = this.nextElementSibling;
+                const isOpen = content.style.display === "block";
+      
+                content.style.display = isOpen ? "none" : "block";
+              });
+           }
+}
+
+// Gets a random item parsedData
+function getRandom() {
+	const ranItem = parsedData[Math.floor(Math.random() * parsedData.length)];
+	const container = document.getElementById("ran_result");
+	container.innerHTML = ranItem["name"];
+}
+
+// Run functions on load
 loadCSV();
+renderDropdown();
 
 </script>
 
 </body>
 </html>
-
-<>
