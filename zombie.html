@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>The Zombie</title>
+
+<style>
+table, td, th, tr {
+    border-collapse:collapse;
+    border:1px solid black; 
+    padding:2px; 
+    }
+    tr.alt1 { background-color:#E0E0E0; }
+    tr.alt2 { background-color:#FFFFFF; }
+    .prop { margin-left: 30px; margin-top: 2px; margin-bottom: 2px; }
+    .alg { margin-left: 60px; margin-top: 2px; margin-bottom: 2px;}
+    .tool { margin-left: 90px; margin-top: 2px; margin-bottom: 2px;}
+    .toolprop { margin-left: 120px; margin-top: 2px; margin-bottom: 2px;}
+    a:link,a:visited {text-decoration:none}
+    a:hover {text-decoration:underline}
+    .hidden { display: none; }
+    .unhidden { display: block; }
+
+.table th, .table td {
+         width: 50px;
+         word-wrap: break-word;
+         font-size: 14px;
+         padding: 2px;
+         padding-left: 6px;
+}
+.table th { 
+         text-align: left !important;
+         color: white; 
+}
+.table {
+         table-layout: fixed;
+         margin-bottom: 20px; 
+}
+.table-container {
+         position: relative;
+}
+.collapsible {
+	background-color: cornflowerblue;
+       	color: white;
+       	cursor: pointer;
+       	padding: 5px;
+       	width: 100%;
+       	border: 1px solid #dee2e6;
+       	text-align: left;
+       	outline: none;
+       	font-size: 14px;
+}
+.content {
+       	padding-left: 50px;
+      	display: none;
+       	overflow: hidden;
+}
+
+</style>
+</head>
+<body>
+As you draw closer you realize this isn't a real zombie, but an actor. How disappointing, meeting the undead would have made a great tale! Alas you figure you should have guessed...<br><br>
+
+DEVELOPMENT NOTE:
+The Zombie will let the Bard look at a list of his favourite films (list of zombie films). He says that the paper is enchanted so you can filter the list or get a random film.<br>
+
+<div id="result"></div>
+
+<script>
+const csvUrl = '../csv/zombie_data.csv'; 
+
+async function loadCSV() {
+    try {
+        const response = await fetch(csvUrl);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const csvText = await response.text();
+        
+        const parsedData = parseCSVText(csvText);
+        console.log(parsedData); 
+    } catch (error) {
+        console.error('Error loading the CSV file:', error);
+    }
+}
+
+function parseCSVText(text) {
+    const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+    if (lines.length === 0) return [];
+
+    // Extract headers
+    const headers = lines[0].split(',');
+
+    // Map remaining rows to objects
+    return lines.slice(1).map(line => {
+        const values = line.split(',');
+        const obj = {};
+        headers.forEach((header, index) => {
+            obj[header] = values[index] || '';
+        });
+        return obj;
+    });
+}
+
+# Run functions on load
+loadCSV();
+
+</script>
+
+</body>
+</html>
+
+<>
