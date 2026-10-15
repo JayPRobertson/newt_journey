@@ -7,13 +7,62 @@
 <title>Campsite</title>
 
 <style>
+.playlist { 
+	list-style: none; 
+	padding: 0; 
+}
+.playlist button {
+	display: block; 
+	margin: 5px 0; 
+	padding: 8px 12px; 
+	background: #f0f0f0; 
+	border: 1px solid #ccc; 
+	cursor: pointer; 
+}
+.playlist button:hover { 
+	background: #e0e0e0; 
+}
+.now-playing {
+	font-weight: bold;
+	margin-bottom: 10px; 
+}
 </style>
 </head>
 <body>
-DEVELOPER NOTE: You share a campsite for a night with a bard who will sing for you and a writer who tells you tales. Host for music and writing
-<script>
+DEVELOPER NOTE: You share a campsite for a night with a bard who will sing for you and a writer who tells you tales. Host for music and writing<br>
 
-</script>
+<a href="#" onclick="history.back(); return false;" style="text-decoration: none; font-size: 18px; font-family: "Gill Sans", sans-serif;">&#8592; Go Back</a><br>
+
+
+<div class="now-playing">Now Playing: <span id="song-title">Select a song</span></div>
+    
+<audio id="audio-player" controls>
+        Your browser does not support the audio element.
+</audio>
+
+<h3>Playlist</h3>
+<div class="playlist">
+<button onclick="playSong('Dance of Spirits (2021)', 'songs/dance_of_spirits.mp3')">Play Dance of Spirits</button>
+<button onclick="playSong('Deep Woods (2020)', 'songs/deep_woods.mp3')">Play Deep Woods</button>
+</div>
+
+    <script>
+        function playSong(title, sourceUrl) {
+            const player = document.getElementById('audio-player');
+            const titleDisplay = document.getElementById('song-title');
+            
+            titleDisplay.textContent = title;
+            player.src = sourceUrl;
+            player.load();
+            player.play().catch(error => {
+                console.log("Playback failed due to browser policies: ", error);
+            });
+        }
+    </script>
+
+</body>
+</html>
+
 
 </body>
 </html>

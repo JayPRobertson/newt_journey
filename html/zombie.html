@@ -12,7 +12,7 @@
          position: relative;
 }
 .collapsible {
-	background-color: cornflowerblue;
+	background-color: #b58c55;
        	color: white;
        	cursor: pointer;
        	padding: 5px;
@@ -21,11 +21,14 @@
        	text-align: left;
        	outline: none;
        	font-size: 14px;
+	font-family: "Gill Sans", sans-serif;
 }
 .content {
+	background-color: #ffd8a3;
        	padding-left: 50px;
       	display: none;
        	overflow: hidden;
+	font-family: "Gill Sans", sans-serif;
 }
 .button {
        background-color: #8f8d8d;
@@ -37,6 +40,7 @@
        margin-right: 5px;
        border-radius: 8px;
        border: none;
+       font-family: "Gill Sans", sans-serif;
      }
 .button:focus {     
        background-color: #8f8d8d;
@@ -54,13 +58,13 @@
 </head>
 <body>
 
-<a href="#" onclick="history.back(); return false;" style="text-decoration: none; font-size: 18px;">&#8592; Go Back</a><br>
+<a href="#" onclick="history.back(); return false;" style="text-decoration: none; font-size: 18px; font-family: 'Gill Sans', sans-serif;">&#8592; Go Back</a><br>
 As you draw closer you realize this isn't a real zombie, but an actor. How disappointing, meeting the undead would have made a great tale! Alas you figure you should have guessed...<br><br>
 
 DEVELOPMENT NOTE:
 The Zombie will let the Bard look at a list of his favourite films (list of zombie films). He says that the paper is enchanted so you can filter the list or get a random film.<br>
 
-<div id="result"></div>
+<div id="result"></div><br>
 <iframe width="560" 
 	height="315" 
 	src="https://www.youtube.com/embed/mmFH1L7rK8s?si=EuRcAd0fNWIs_JJ2" 
