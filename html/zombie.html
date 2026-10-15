@@ -57,7 +57,7 @@
 <a href="#" onclick="history.back(); return false;" style="text-decoration: none; font-size: 18px;">&#8592; Go Back</a><br>
 As you draw closer you realize this isn't a real zombie, but an actor. How disappointing, meeting the undead would have made a great tale! Alas you figure you should have guessed...<br><br>
 
-DEVELOPER NOTE:
+DEVELOPMENT NOTE:
 The Zombie will let the Bard look at a list of his favourite films (list of zombie films). He says that the paper is enchanted so you can filter the list or get a random film.<br>
 
 <div id="result"></div>
@@ -92,40 +92,70 @@ async function loadCSV() {
 }
 
 function parseCSVText(text) {
-    const lines = text.split('\n').map(line => line.trim()).filter(line => line);
-    if (lines.length === 0) return [];
-    
-    const headers = ["timestamp", "name", "description", "rating", "gen_scary", "setting", "is_apocalypse", "setting_qualities", "zom_qualities", "zom_info", "zom_scary", "genre", "is_real", "infection", "cause", "review", "ranking"];
-    
-    return lines.slice(1).map(line => {
-                const values = [];
-                let current = '';
-                let inQuotes = false;
+  const rows = [];
+  let currentRow = [];
+  let currentVal = '';
+  let inQuotes = false;
 
-                for (let i = 0; i < line.length; i++) {
-                    let char = line[i];
-                    if (char === '"') {
-                        inQuotes = !inQuotes; // Toggle quote state
-                    } else if (char === ',' && !inQuotes) {
-                        values.push(current.trim());
-                        current = '';
-                    } else {
-                        current += char;
-                    }
-                }
-                values.push(current.trim());
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    const nextChar = text[i + 1];
 
-                const obj = {};
-                headers.forEach((header, index) => {
-                    // Clean up any lingering outer quotation marks from the parsed strings
-                    let val = values[index] || '';
-                    if (val.startsWith('"') && val.endsWith('"')) {
-                        val = val.slice(1, -1);
-                    }
-                    obj[header] = val;
-                });
-                return obj;
-            });
+    if (char === '"') {
+      if (inQuotes && nextChar === '"') {
+        currentVal += '"'; // Handle escaped double quotes
+        i++;
+      } else {
+        inQuotes = !inQuotes; // Toggle quote state
+      }
+    } else if (char === ',' && !inQuotes) {
+      currentRow.push(currentVal.trim());
+      currentVal = '';
+    } else if ((char === '\r' || char === '\n') && !inQuotes) {
+      if (char === '\r' && nextChar === '\n') {
+        i++; // Handle CRLF line endings
+      }
+      currentRow.push(currentVal.trim());
+      if (currentRow.some(cell => cell.length > 0)) {
+        rows.push(currentRow);
+      }
+      currentRow = [];
+      currentVal = '';
+    } else {
+      currentVal += char;
+    }
+  }
+
+  // Push the final value and row if not empty
+  if (currentVal.length > 0 || currentRow.length > 0) {
+    currentRow.push(currentVal.trim());
+    if (currentRow.some(cell => cell.length > 0)) {
+      rows.push(currentRow);
+    }
+  }
+
+  if (rows.length === 0) return [];
+
+  const headers = [
+    "timestamp", "name", "description", "rating", "gen_scary", 
+    "setting", "is_apocalypse", "setting_qualities", "zom_qualities", 
+    "zom_info", "zom_scary", "genre", "is_real", "infection", 
+    "cause", "review", "ranking"
+  ];
+
+  // Map rows (skipping the header row) to objects
+  return rows.slice(1).map(row => {
+    const obj = {};
+    headers.forEach((header, index) => {
+      let val = row[index] || '';
+      // Remove surrounding quotes if they exist
+      if (val.startsWith('"') && val.endsWith('"')) {
+        val = val.slice(1, -1).replace(/""/g, '"');
+      }
+      obj[header] = val;
+    });
+    return obj;
+  });
 }
 
 function renderDropdown() {
@@ -175,5 +205,6 @@ function getRandom() {
 loadCSV(); 
 
 </script>
+
 </body>
 </html>
