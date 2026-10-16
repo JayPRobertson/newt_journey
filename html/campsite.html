@@ -25,7 +25,6 @@
             background: #e0e0e0;
         }
         .now-playing {
-            font-weight: bold;
             margin-bottom: 10px;
         }
         .text-box {
@@ -34,11 +33,11 @@
             width: 320px;
             text-align: center;
             padding: 30px;
-            margin: 20px 0;
+            margin: 20px auto;
             border-radius: 5px;
-	    display: flex;
-  	    justify-content: center;
-            align-items: center; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         .nav-link {
             text-decoration: none;
@@ -49,32 +48,101 @@
         button {
             cursor: pointer;
         }
+        .character-container {
+            position: absolute;
+            width: 300px;
+            height: auto;
+        }
+        
+        .interactive-image {
+            width: 100%;
+            height: auto;
+            cursor: pointer;
+            transition: filter 0.3s ease, transform 0.3s ease;
+        }
+        .character-container:hover .interactive-image {
+            filter: drop-shadow(0px 10px 15px rgba(0, 0, 0, 0.3));
+            transform: translateY(-5px);
+        }
+        .bard {
+            left: 30%;
+            top: 20%;
+        }
+        .author {
+            left: 70%;
+            top: 30%;
+        }
+        
+        .character-container .popup-info {
+            position: absolute;
+            bottom: 50%;
+            background-color: rgba(0, 0, 0, 0.85);
+            color: #fff;
+            padding: 15px;
+            border-radius: 6px;
+            width: 220px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .bard .popup-info {
+            left: calc(30vw - 20% - 110px); 
+        }
+        .author .popup-info {
+            left: calc(10vw - 70% - 110px); 
+        }
+
+        .character-container:hover .popup-info {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(-5px);
+        }
     </style>
 </head>
 <body>
-
-    <a href="#" id="back1" onclick="history.back(); return false;" class="nav-link">← Go Back</a>
-
+    <a href="#" id="back1" onclick="history.back(); return false;" class="nav-link">&#8592; Go Back</a>
+    
     <div class="text-box" id="narrative-container">
         <div id="intro1">
-            As the sun recedes over the horizon, the forest begins to grow dark eerie. Trees reach their ghastly limbs towards you, tearing at your clothes. Footsteps echo all around you and it feels like hidden eyes watch your every move. You begin to run, terrified.<br>
+            As the sun recedes over the horizon, the forest begins to grow dark. The Newt quivers in fear. Trees reach out their ghastly limbs, tearing at its cloak. Footsteps echo all around and eyes peer out from the darkness, watching and waiting. The Newt begins to run.<br>
         </div>
         <div id="intro2" style="display: none;">
-            When it seems like your legs are about to give up on you, a glow catches your eyes from between two trees. Curious, you burst through the brush. As you emerge into the clearing you see a welcome sight: a campfire! The two critters who sit around it quickly invite you to join them.
+            After a few minutes, the exhausted Newt stops to breathe. A glow catches its eye from between two trees. Curious, the Newt peers through the brush and sees a welcome sight: a campfire! Two critters sit on logs around the fire and invite the Newt to join them.
         </div>
-        <div id="intro3" style="display: none;">
-            <p>DEVELOPER NOTE: You share a campsite for a night with a bard who will sing for you and a writer who tells you tales. Host for music and writing</p>
-            <button onclick="talkToCritter('bard', 0);">The Bard</button>
-            <button onclick="talkToCritter('author', 0);">The Bard</button>
-        </div>
-        <br>
         <button style="margin-left: 20px;" id="next" onclick="switchIntro(1);">&rarr;</button>
+    </div>
+
+    <!-- Character Choice Grid -->
+    <div id="intro3" style="display: none;">
+        
+        <!-- Bard Container -->
+        <div class="character-container bard" onclick="talkToCritter('bard', 0);">
+            <div class="popup-info">
+		<h3>The Bard</h3>
+	        <p>The Bard carries a strange instrument with her unlike anything the Newt has ever seen. She plays sweet music and will take take requests.</p>
+	    </div>
+            <img src="../elements/critter_temp.png" class="interactive-image" alt="Bard">
+        </div>
+        
+        <!-- Author Container -->
+        <div class="character-container author" onclick="talkToCritter('author', 0);">
+            <div class="popup-info">
+		<h3>The Author</h3>
+	        <p>The Author is eager to talk with the Newt about its adventures.</p>
+	    </div>
+            <img src="../elements/critter_temp.png" class="interactive-image" alt="Author">
+        </div>
     </div>
 
     <!-- Music Section -->
     <div id="bard" style="display: none;">
-        <a href="#" id="back2" onclick="talkToCritter('bard', 1); return false;" class="nav-link">← Go Back</a>
-        <div class="now-playing">Now Playing: <span id="song-title">Select a song</span></div>
+        <a href="#" id="back2" onclick="talkToCritter('bard', 1); return false;" class="nav-link">&#8592; Go Back</a>
+        <h3>The Bard</h3>
+        <div class="now-playing">She begins to play a tune on her odd instrument...<br><span id="song-title">Select a song</span></div>
         <audio id="audio-player" controls>
             Your browser does not support the audio element.
         </audio>
@@ -87,10 +155,9 @@
 
     <!-- Writing Section -->
     <div id="author" style="display: none;">
-        <!-- Fixed: Changed 'Author' to lowercase 'author' to match the element ID -->
-        <a href="#" id="back3" onclick="talkToCritter('author', 1); return false;" class="nav-link">← Go Back</a>
+        <a href="#" id="back3" onclick="talkToCritter('author', 1); return false;" class="nav-link">&#8592; Go Back</a>
         <h3>The Author</h3>
-        <p>The author opens their notebook and begins to read...</p>
+        <p>The Author opens their notebook and begins to read...</p>
     </div>
 
     <script>
@@ -110,31 +177,30 @@
         function switchIntro(adder) {
             const oldIntro = document.getElementById("intro" + introCount);
             const newIntro = document.getElementById("intro" + (introCount + adder));
-            
             if (oldIntro && newIntro) {
                 oldIntro.style.display = "none";
                 newIntro.style.display = "block";
                 introCount += adder;
             }
-
-            // Hide the next button when reaching the final choice step (Intro 3)
             if (introCount === 3) {
                 document.getElementById('next').style.display = "none";
+                document.getElementById('narrative-container').style.display = "none";
+                document.getElementById('intro3').style.display = "block";
             } else {
                 document.getElementById('next').style.display = "block";
+                document.getElementById('narrative-container').style.display = "block";
             }
         }
 
         function talkToCritter(critter, direction) {
             if (direction == 0) {
-                // Hide the entire narrative box once a choice is made
-		document.getElementById('back1').style.display = "none";
-                document.getElementById('narrative-container').style.display = "none";
+                document.getElementById('back1').style.display = "none";
+                document.getElementById('intro3').style.display = "none";
                 document.getElementById(critter).style.display = "block";
             } else {
                 document.getElementById(critter).style.display = "none";
-		document.getElementById('back1').style.display = "block";
-                document.getElementById('narrative-container').style.display = "block";
+                document.getElementById('back1').style.display = "block";
+                document.getElementById('intro3').style.display = "block";
             }
         }
     </script>

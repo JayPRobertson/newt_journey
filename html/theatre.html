@@ -6,23 +6,349 @@
 
 <title>The Theatre</title>
 
-<style></style>
+<style>
+body {
+   	font-family: "Gill Sans", sans-serif;
+   	padding: 20px;
+}
+.text-box {
+        background-color: #8f8d8d;
+        color: white;
+        width: 320px;
+        text-align: center;
+        padding: 30px;
+        margin: 20px auto;
+        border-radius: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+}
+.nav-link {
+        text-decoration: none;
+        font-size: 18px;
+        display: inline-block;
+        margin-bottom: 15px;
+}
+button {
+        cursor: pointer;
+}
+.character-container {
+	position: absolute;
+        width: 300px;
+        height: auto;
+}
+.interactive-image {
+        width: 100%;
+        height: auto;
+        cursor: pointer;
+        transition: filter 0.3s ease, transform 0.3s ease;
+}
+.character-container:hover .interactive-image {
+        filter: drop-shadow(0px 10px 15px rgba(0, 0, 0, 0.3));
+        transform: translateY(-5px);
+}
+.director {
+	left: 50%;
+	top: 20%;
+}
+.zombie {
+	left: 80%;
+	top: 30%;
+}
+.character-container .popup-info {
+	position: absolute;
+	bottom: 50%;
+	background-color: rgba(0, 0, 0, 0.85);
+	color: #fff;
+	padding: 15px;
+	border-radius: 6px;
+	width: 220px;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+	z-index: 10;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.3s ease, transform 0.3s ease;
+	pointer-events: none;
+} 
+.director .popup-info {
+	left: calc(0vw - 20% - 110px); 
+}
+.zombie .popup-info {
+	left: calc(10vw - 70% - 110px); 
+}
+.character-container:hover .popup-info {
+	opacity: 1;
+	visibility: visible;
+	transform: translateY(-5px);
+}
+.table-container {
+         position: relative;
+}
+.collapsible {
+	background-color: #b58c55;
+       	color: white;
+       	cursor: pointer;
+       	padding: 5px;
+       	width: 100%;
+       	border: 1px solid #dee2e6;
+       	text-align: left;
+       	outline: none;
+	font-size: 40px;
+	font-family: "Gill Sans", sans-serif;
+}
+.content {
+	background-color: #ffd8a3;
+       	padding-left: 50px;
+      	display: none;
+       	overflow: hidden;
+	font-family: "Gill Sans", sans-serif;
+}
+.button {
+       background-color: #8f8d8d;
+       color: white;
+       padding: 5px 10px;
+       text-align: center;
+       display: inline-block;
+       margin-right: 5px;
+       border-radius: 8px;
+       border: none;
+       font-family: "Gill Sans", sans-serif;
+     }
+.button:focus {     
+       background-color: #8f8d8d;
+       color: white;
+       padding: 5px 10px;
+       text-align: center;
+       display: inline-block;
+       font-size: 20px;
+       margin-right: 5px;
+       border-radius: 8px;
+       border: 2px solid black;
+}
+</style>
 </head>
 <body>
-<a href="#" onclick="history.back(); return false;" style="text-decoration: none; font-size: 18px; font-family: 'Gill Sans', sans-serif;">&#8592; Go Back</a><br>
+    <a href="#" id="back1" onclick="history.back(); return false;" class="nav-link">&#8592; Go Back</a>
 
-DEVELOPER NOTE: All my movie analysis stuff<br>
+<div class="text-box" id="narrative-container">
+        <div id="intro1">
+           TEMP: The Newt is mistaken for a show hand and ushered into the Theatre by accident.<br>
+        </div>
+        <div id="intro2" style="display: none;">
+           TEMP: The Newt looks around the Theatre.<br>
+        </div>
+        <button style="margin-left: 20px;" id="next" onclick="switchIntro(1);">&rarr;</button>
+</div>
 
-<button type="button" class="button" onclick="talkToZombie()">The Zombie</button> 
-<button type="button" class="button" onclick="talkToDirector()">The Director</button> 
+ <!-- Character Choice Grid -->
+    <div id="intro3" style="display: none;">
+        
+        <!-- Zombie Container -->
+        <div class="character-container zombie" onclick="talkToCritter('zombie', 0);">
+            <div class="popup-info">
+		<h3>The Zombie</h3>
+	        <p></p>
+	    </div>
+            <img src="../elements/critter_temp.png" class="interactive-image" alt="Zombie">
+        </div>
+        
+        <!-- Director Container -->
+        <div class="character-container director" onclick="talkToCritter('director', 0);">
+            <div class="popup-info">
+		<h3>The Director</h3>
+	        <p></p>
+	    </div>
+            <img src="../elements/critter_temp.png" class="interactive-image" alt="Director">
+        </div>
+    </div>
+
+<!-- Chrysalis Section -->
+     <div id="director" style="display: none;">
+        <a href="#" id="back3" onclick="talkToCritter('director', 1); return false;" class="nav-link">&#8592; Go Back</a>
+        <h3>The Director</h3>
+        <p>The Director shouts instructions to the crew. When the Newt approaches she stops and turns to it. "Are you new here?" She asks.</p>
+    </div>
+
+    <!-- Zombies Section -->
+    <div id="zombie" style="display: none;">
+        <a href="#" id="back3" onclick="talkToCritter('zombie', 1); return false;" class="nav-link">&#8592; Go Back</a>
+        <h3>The Zombie</h3>
+        <p>The Zombie groans at the Newt when it approaches. The Newt jumps back in surprise. "Don't worry I'm not a real zombie," says the Zombie. The Newt is not convinced.</p>
+
+	<div id="result"></div><br>
+<iframe width="560" 
+	height="315" 
+	src="https://www.youtube.com/embed/mmFH1L7rK8s?si=EuRcAd0fNWIs_JJ2" 
+	title="YouTube video player"
+	frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+	referrerpolicy="strict-origin-when-cross-origin" 
+ 	allowfullscreen></iframe>
+<button type="button" class="button" onclick="getRandom()">Get random film</button> 
+<div id="ran_result"></div>
+    </div>
 
 <script>
-function talkToZombie(){ 
-	window.location.href="zombie.html";
-} 
+let introCount = 1;
+const csvUrl = '../csv/zombie_data.csv';
+let parsedData;
+        function switchIntro(adder) {
+            const oldIntro = document.getElementById("intro" + introCount);
+            const newIntro = document.getElementById("intro" + (introCount + adder));
+            if (oldIntro && newIntro) {
+                oldIntro.style.display = "none";
+                newIntro.style.display = "block";
+                introCount += adder;
+            }
+            if (introCount === 3) {
+                document.getElementById('next').style.display = "none";
+                document.getElementById('narrative-container').style.display = "none";
+                document.getElementById('intro3').style.display = "block";
+            } else {
+                document.getElementById('next').style.display = "block";
+                document.getElementById('narrative-container').style.display = "block";
+            }
+        }
 
-function talkToDirector(){ 
-} 
+        function talkToCritter(critter, direction) {
+            if (direction == 0) {
+                document.getElementById('back1').style.display = "none";
+                document.getElementById('intro3').style.display = "none";
+                document.getElementById(critter).style.display = "block";
+            } else {
+                document.getElementById(critter).style.display = "none";
+                document.getElementById('back1').style.display = "block";
+                document.getElementById('intro3').style.display = "block";
+            }
+        }
+
+async function loadCSV() {
+    try {
+        const response = await fetch(csvUrl);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const csvText = await response.text();
+        parsedData = parseCSVText(csvText);
+        console.log(parsedData);
+    
+        renderDropdown(); 
+    } catch (error) {
+        console.error('Error loading the CSV file:', error);
+    }
+}
+
+function parseCSVText(text) {
+  const rows = [];
+  let currentRow = [];
+  let currentVal = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    const nextChar = text[i + 1];
+
+    if (char === '"') {
+      if (inQuotes && nextChar === '"') {
+        currentVal += '"'; // Handle escaped double quotes
+        i++;
+      } else {
+        inQuotes = !inQuotes; // Toggle quote state
+      }
+    } else if (char === ',' && !inQuotes) {
+      currentRow.push(currentVal.trim());
+      currentVal = '';
+    } else if ((char === '\r' || char === '\n') && !inQuotes) {
+      if (char === '\r' && nextChar === '\n') {
+        i++; // Handle CRLF line endings
+      }
+      currentRow.push(currentVal.trim());
+      if (currentRow.some(cell => cell.length > 0)) {
+        rows.push(currentRow);
+      }
+      currentRow = [];
+      currentVal = '';
+    } else {
+      currentVal += char;
+    }
+  }
+
+  // Push the final value and row if not empty
+  if (currentVal.length > 0 || currentRow.length > 0) {
+    currentRow.push(currentVal.trim());
+    if (currentRow.some(cell => cell.length > 0)) {
+      rows.push(currentRow);
+    }
+  }
+
+  if (rows.length === 0) return [];
+
+  const headers = [
+    "timestamp", "name", "description", "rating", "gen_scary", 
+    "setting", "is_apocalypse", "setting_qualities", "zom_qualities", 
+    "zom_info", "zom_scary", "genre", "is_real", "infection", 
+    "cause", "review", "ranking"
+  ];
+
+  // Map rows (skipping the header row) to objects
+  return rows.slice(1).map(row => {
+    const obj = {};
+    headers.forEach((header, index) => {
+      let val = row[index] || '';
+      // Remove surrounding quotes if they exist
+      if (val.startsWith('"') && val.endsWith('"')) {
+        val = val.slice(1, -1).replace(/""/g, '"');
+      }
+      obj[header] = val;
+    });
+    return obj;
+  });
+}
+
+function renderDropdown() {
+    const container = document.getElementById("result");
+    const html = document.createElement("div");
+    appendDropdowns(parsedData, html);
+    container.appendChild(html);
+    setupCollapsibles();
+}
+
+function appendDropdowns(obj, parent) {
+    for (const item of obj) {
+        const btn = document.createElement("button");
+        btn.className = "collapsible";
+        btn.textContent = item["name"];
+        
+        const div = document.createElement("div");
+        div.className = "content";
+        div.textContent = item["description"];
+        
+        parent.appendChild(btn);
+        parent.appendChild(div);
+    }
+}
+
+function setupCollapsibles() {
+    const coll = document.getElementsByClassName("collapsible");
+    for (let i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function () {
+            this.classList.toggle("active");
+            const content = this.nextElementSibling;
+            const isOpen = content.style.display === "block";
+            content.style.display = isOpen ? "none" : "block";
+        });
+    }
+}
+
+function getRandom() {
+    if (!parsedData || parsedData.length === 0) return;
+    const ranItem = parsedData[Math.floor(Math.random() * parsedData.length)];
+    console.log(ranItem);
+    const container = document.getElementById("ran_result");
+    container.innerHTML = ranItem["name"];
+}
+
+// Run functions on load
+loadCSV(); 
 
 </script>
 
