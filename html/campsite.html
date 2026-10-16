@@ -26,14 +26,41 @@
 	font-weight: bold;
 	margin-bottom: 10px; 
 }
+.text-box {
+	background-color: #8f8d8d;
+	font-family: "Gill Sans", sans-serif;
+	width: 160px;
+  	text-align: center;
+ 	padding: 8px 0;
+  	position: absolute;
+  	z-index: 1;
+  	bottom: 125%;
+  	left: 50%;
+  	margin-left: -80px;
+}
 </style>
 </head>
 <body>
+<div class="text-box">
+<button id="next" onclick="switchIntro(1);">&rarr;</button>
+<div id="intro1">
+As the sun recedes over the horizon, the forest begins to grow dark eerie. Trees reach their ghastly limbs towards you, tearing at your clothes. Footsteps echo all around you and it feels like hidden eyes watch your every move. You begin to run, terrified.<br>
+</div>
+<div id="intro2" style="display: none;">
+When it seems like your legs are about to give up on you, a glow catches your eyes from between two trees. Curious, you bush through the brush. As you emerge into the clearing you see a welcome sight: a campfire! The two critters who sit around it quickly invite you to join them.
+</div>
+</div>
+
+<div id="intro3" style="display: none;">
 DEVELOPER NOTE: You share a campsite for a night with a bard who will sing for you and a writer who tells you tales. Host for music and writing<br>
 
-<a href="#" onclick="history.back(); return false;" style="text-decoration: none; font-size: 18px; font-family: "Gill Sans", sans-serif;">&#8592; Go Back</a><br>
+<button onclick="talkToCritter('Bard');">Bard</button>
+<button onclick="talkToCritter('Author');">Author</button>
+</div>
 
+<a href="#" onclick="history.back(); return false;" style="text-decoration: none; font-size: 18px; font-family: 'Gill Sans', sans-serif;">&#8592; Go Back</a><br>
 
+<div id="music" style="display: none;">
 <div class="now-playing">Now Playing: <span id="song-title">Select a song</span></div>
     
 <audio id="audio-player" controls>
@@ -42,23 +69,58 @@ DEVELOPER NOTE: You share a campsite for a night with a bard who will sing for y
 
 <h3>Playlist</h3>
 <div class="playlist">
-<button onclick="playSong('Dance of Spirits (2021)', 'songs/dance_of_spirits.mp3')">Play Dance of Spirits</button>
-<button onclick="playSong('Deep Woods (2020)', 'songs/deep_woods.mp3')">Play Deep Woods</button>
+<button onclick="playSong('Dance of Spirits (2021)', '../songs/dance_of_spirits.mp3')">Play Dance of Spirits</button>
+<button onclick="playSong('Deep Woods (2020)', '../songs/deep_woods.mp3')">Play Deep Woods</button>
+</div>
 </div>
 
-    <script>
-        function playSong(title, sourceUrl) {
-            const player = document.getElementById('audio-player');
-            const titleDisplay = document.getElementById('song-title');
+<div id="writing" style="display: none;">
+The Author
+</div>
+
+<script>
+let introCount = 1;
+
+function playSong(title, sourceUrl) {
+       const player = document.getElementById('audio-player');
+       const titleDisplay = document.getElementById('song-title');
             
-            titleDisplay.textContent = title;
-            player.src = sourceUrl;
-            player.load();
-            player.play().catch(error => {
-                console.log("Playback failed due to browser policies: ", error);
-            });
-        }
-    </script>
+        titleDisplay.textContent = title;
+        player.src = sourceUrl;
+        player.load();
+        player.play().catch(error => {
+            console.log("Playback failed due to browser policies: ", error);
+        });
+}
+
+function switchIntro(adder) {
+	if (introCount == 2){
+		const next = document.getElementById('next');
+		next.style.display = "none";
+	}
+
+	const oldIntro = document.getElementById("intro" + (introCount));
+	const newIntro = document.getElementById("intro" + (introCount + adder));
+
+	oldIntro.style.display = "none";
+	newIntro.style.display = "block";
+	introCount += adder;
+
+	console.log("Switched to Intro #" + introCount);
+}
+
+function talkToCritter(critter) {
+	const campfire = document.getElementById('intro3');
+	campfire.style.display = "none";
+	if (critter == "Bard") {
+		const bard = document.getElementById('music');
+		bard.style.display = "block"
+	} else if (critter == "Author") {
+		const author = document.getElementById('writing');
+		author.style.display = "block"
+	}
+}
+</script>
 
 </body>
 </html>
